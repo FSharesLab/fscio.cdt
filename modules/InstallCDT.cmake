@@ -1,0 +1,71 @@
+add_custom_command( TARGET FscioClang POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
+macro( fscio_clang_install file )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/FscioClang-prefix/src/FscioClang-build/bin)
+   add_custom_command( TARGET FscioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( fscio_clang_install )
+
+macro( fscio_clang_install_and_symlink file symlink )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/FscioClang-prefix/src/FscioClang-build/bin)
+   add_custom_command( TARGET FscioClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   add_custom_command( TARGET FscioClang POST_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${file} ${symlink} )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( fscio_clang_install_and_symlink )
+
+macro( fscio_tool_install file )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/FscioTools-prefix/src/FscioTools-build/bin)
+   add_custom_command( TARGET FscioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( fscio_tool_install )
+
+macro( fscio_tool_install_and_symlink file symlink )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/FscioTools-prefix/src/FscioTools-build/bin)
+   add_custom_command( TARGET FscioTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
+   add_custom_command( TARGET FscioTools POST_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${file} ${symlink} )
+   install(FILES ${BINARY_DIR}/${file}
+      DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( fscio_tool_install_and_symlink )
+
+macro( fscio_libraries_install)
+   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lib)
+   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/include)
+   set(BIN_DIR ${CMAKE_BINARY_DIR}/FscioWasmLibraries-prefix/src/FscioWasmLibraries-build/)
+   install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+   install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+endmacro( fscio_libraries_install )
+
+fscio_clang_install_and_symlink(llvm-ranlib fscio-ranlib)
+fscio_clang_install_and_symlink(llvm-ar fscio-ar)
+fscio_clang_install_and_symlink(llvm-nm fscio-nm)
+fscio_clang_install_and_symlink(llvm-objcopy fscio-objcopy)
+fscio_clang_install_and_symlink(llvm-objdump fscio-objdump)
+fscio_clang_install_and_symlink(llvm-readobj fscio-readobj)
+fscio_clang_install_and_symlink(llvm-readelf fscio-readelf)
+fscio_clang_install_and_symlink(llvm-strip fscio-strip)
+fscio_clang_install(opt)
+fscio_clang_install(llc)
+fscio_clang_install(lld)
+fscio_clang_install(ld.lld)
+fscio_clang_install(ld64.lld)
+fscio_clang_install(clang-7)
+fscio_clang_install(wasm-ld)
+fscio_tool_install(fscio-pp)
+fscio_tool_install(fscio-wast2wasm)
+fscio_tool_install(fscio-wasm2wast)
+fscio_tool_install(fscio-cc)
+fscio_tool_install(fscio-cpp)
+fscio_tool_install(fscio-ld)
+fscio_tool_install(fscio-abigen)
+fscio_tool_install(fscio-abidiff)
+fscio_tool_install(fscio-init)
+fscio_clang_install(../lib/LLVMFscioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
+fscio_clang_install(../lib/LLVMFscioSoftfloat${CMAKE_SHARED_LIBRARY_SUFFIX})
+fscio_clang_install(../lib/fscio_plugin${CMAKE_SHARED_LIBRARY_SUFFIX})
+fscio_libraries_install()

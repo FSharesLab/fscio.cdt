@@ -1,0 +1,1 @@
+add_llvm_loadable_module(fscio_plugin fscio_autogen.cpp PLUGIN_TOOL clang)
